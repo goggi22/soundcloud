@@ -105,11 +105,11 @@
   <div class="card">
     <div class="logo"><span>SC</span></div>
     <h1>SoundCloud OAuth Redirect</h1>
-    <p>Скопируйте код авторизации, который SoundCloud передал в URL, и отправьте его боту.</p>
+    <p>Скопируйте полный redirect URL из адресной строки и отправьте его боту в формате <code>.sccode https://...</code>.</p>
 
-    <div class="code-box" id="codeBox">Waiting for the code ...</div>
-    <button id="copyButton">Copy code</button>
-    <p class="hint" id="hint">If the code is missing, make sure your SoundCloud app redirect_uri points to this page.</p>
+    <div class="code-box" id="codeBox">Waiting for redirect...</div>
+    <button id="copyButton">Copy full redirect URL</button>
+    <p class="hint" id="hint">If the code is missing, make sure SoundCloud redirects here with <code>?code=...</code>.</p>
   </div>
 
   <script>
@@ -119,13 +119,14 @@
     }
 
     const code = getQueryParam('code');
+    const fullUrl = window.location.href;
     const codeBox = document.getElementById('codeBox');
     const copyButton = document.getElementById('copyButton');
     const hint = document.getElementById('hint');
 
     if (code) {
-      codeBox.textContent = code;
-      hint.textContent = 'Нажмите кнопку, чтобы скопировать код в буфер обмена.';
+      codeBox.textContent = fullUrl;
+      hint.textContent = 'Нажмите кнопку, чтобы скопировать полный redirect URL.';
     } else {
       codeBox.textContent = 'Code not found in the URL. Make sure SoundCloud redirects here with ?code=...';
       codeBox.classList.add('error');
@@ -134,7 +135,7 @@
 
     copyButton.addEventListener('click', async () => {
       try {
-        await navigator.clipboard.writeText(code || '');
+        await navigator.clipboard.writeText(fullUrl);
         copyButton.textContent = 'Copied!';
         copyButton.disabled = true;
       } catch (error) {
